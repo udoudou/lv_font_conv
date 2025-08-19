@@ -84,6 +84,14 @@ function generate_opts_string(args) {
     opts.push('--use-color-info');
   }
 
+  if (args.stride) {
+    opts.push('--stride', args.stride);
+  }
+
+  if (args.align) {
+    opts.push('--align', args.align);
+  }
+
   for (var i = 0; i < args.font.length; i++) {
     opts.push('--font', args.font[i].source_path);
     const r = args.font[i].ranges;
@@ -119,6 +127,7 @@ document.querySelector('#converterForm').addEventListener('submit', function han
   var _fallback = document.getElementById('fallback').value;
   var _size = document.getElementById('height').value;
   var _bpp = document.getElementById('bpp').value;
+  var _format = document.getElementById('format').value;
   /* eslint-disable max-depth, radix */
   let fcnt = 0;
   let fonts = [];
@@ -166,17 +175,24 @@ document.querySelector('#converterForm').addEventListener('submit', function han
     lcd: document.getElementById('subpixel2').checked,
     lcd_v: document.getElementById('subpixel3').checked,
     use_color_info: document.getElementById('use_color_info').checked,
-    format: 'lvgl',
+    format: _format,
     output: _name,
-    lv_fallback: _fallback
+    lv_fallback: _fallback,
+    // stride: document.getElementById('stride').value,
+    stride: 1,
+    // align: document.getElementById('align').value
+    align: 1
   };
 
   args.opts_string = generate_opts_string(args);
 
   convert(args).then(result => {
     const blob = new Blob([ result[_name] ], { type: 'text/plain;charset=utf-8' });
-
-    FileSaver.saveAs(blob, _name + '.c');
+    let file_format = 'c';
+    if(_format.includes("bin")) {
+      file_format = 'bin';
+    }
+    FileSaver.saveAs(blob, _name + '.' + file_format);
   }).catch(err => {
     /*eslint-disable no-alert*/
     // Try to beautify normal errors
