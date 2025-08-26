@@ -189,7 +189,7 @@ document.querySelector('#converterForm').addEventListener('submit', function han
   convert(args).then(result => {
     const blob = new Blob([ result[_name] ], { type: 'text/plain;charset=utf-8' });
     let file_format = 'c';
-    if(_format.includes("bin")) {
+    if (_format.includes('bin')) {
       file_format = 'bin';
     }
     FileSaver.saveAs(blob, _name + '.' + file_format);
